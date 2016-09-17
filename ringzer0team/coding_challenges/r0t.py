@@ -1,7 +1,7 @@
 import requests
 
 # provide a common interface for all request/compute/request challenges
-def challenge(challenge_id, session_id, callback):
+def challenge(challenge_id, session_id, callback, delimiter="MESSAGE"):
 
     base_url = 'https://ringzer0team.com/challenges/{}/'
     cookies = dict(PHPSESSID=session_id)
@@ -11,7 +11,7 @@ def challenge(challenge_id, session_id, callback):
     try:
         r = requests.get(url, cookies=cookies)
         string = r.text \
-                .split('----- BEGIN MESSAGE -----<br />\r\n\t\t')[1] \
+                .split('----- BEGIN ' + delimiter + ' -----<br />\r\n\t\t')[1] \
                 .split('<br />')[0]
     except Exception:
         return 'Failed to get the challenge, check your session id.'
