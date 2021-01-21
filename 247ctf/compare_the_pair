@@ -1,0 +1,22 @@
+
+== is a weak comparison
+0e<digits> will always be 0
+need to find a string that is prefixed with the prefix will be a number
+
+```
+from itertools import product
+import string
+import hashlib
+
+prefix = b"f789bbc328a3d1a3"
+valid_chars = string.ascii_letters + string.digits
+
+for x in range(5, 10):
+    for combo in product(valid_chars, repeat=x):
+        print("\r{}".format("".join(combo)), end="")
+        result = hashlib.md5(prefix + "".join(combo).encode("utf-8")).hexdigest()
+
+        if result.startswith("0e") and result[2:].isdigit():
+            print("".join(combo))
+            sys.exit(0)
+```

